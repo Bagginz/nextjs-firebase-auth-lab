@@ -1,13 +1,12 @@
-import Layout from '../components/layout';
-import Menu from '../components/menu';
-import { auth, firebase } from '../src/firebase'
+import Layout from '../../components/layout';
+import Menu from '../../components/menu';
+import { auth, firebase } from '../../src/firebase'
 
-function FacebookAuth() {
+function GoogleAuth() {
 
-    let provider = new firebase.auth.FacebookAuthProvider();
-    provider.addScope('user_birthday');
+    const provider = new firebase.auth.GoogleAuthProvider();    
     
-    function signinFacebook(){
+    function signinGoogle(){
         firebase.auth().signInWithPopup(provider).then(function(result) {
         // This gives you a Facebook Access Token. You can use it to access the Facebook API.
             const token = result.credential.accessToken;
@@ -27,7 +26,7 @@ function FacebookAuth() {
         });
     }
 
-    function logoutFacebook(){
+    function logoutGoogle(){
         firebase.auth().signOut().then(function() {
             // Sign-out successful.
             console.log('Sign-out successful.');
@@ -40,15 +39,15 @@ function FacebookAuth() {
     return (
         <>
         <Menu />
-            <Layout>
-                <h1>Firebase Facebook Auth</h1>
-                <div>
-                    <button id="signin" name="signin" onClick={signinFacebook}>Sign In</button>
-                    <button id="logout" name="logout" onClick={logoutFacebook}>Log out</button>
-                </div>
-            </Layout>
+        <Layout>
+            <h1>Firebase Google Auth</h1>
+            <div>
+                <button id="signin" name="signin" onClick={signinGoogle}>Sign In</button>
+                <button id="logout" name="logout" onClick={logoutGoogle}>Log out</button>
+            </div>
+        </Layout>
         </>
     );
 }
   
-export default FacebookAuth
+export default GoogleAuth
