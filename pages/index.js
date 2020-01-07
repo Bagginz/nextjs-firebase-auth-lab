@@ -1,35 +1,71 @@
+import React, { Component } from 'react';
 import Layout from '../components/layout';
 import Menu from '../components/menu';
 import { auth, firebase } from '../src/firebase'
+import { render } from 'react-dom';
 
-function FacebookAuth() {
+class FacebookAuth extends Component {
 
-    let provider = new firebase.auth.FacebookAuthProvider();
-    provider.addScope('user_birthday');
+    constructor() {
+        super();
+        let provider = new firebase.auth.FacebookAuthProvider();
+        this.state = {
+            provider: provider,
+            photo:'',
+            displayname: ''
+        };
+        this.initPage();
+        this.signinFacebook = this.signinFacebook.bind(this);
+        this.logoutFacebook = this.logoutFacebook.bind(this);
+    }
     
-    function signinFacebook(){
-        firebase.auth().signInWithPopup(provider).then(function(result) {
+    initPage(){
+        firebase.auth().onAuthStateChanged((user) => {
+            if(user){
+                // const displayname = user.displayname;
+                // const email = user.email;
+                // const emailVerified = user.emailVerified;
+                // const photoURL = user.photoURL;
+                // const isAnonymous = user.isAnonymous;
+                // const uid = user.uid;
+                // const providerData = user.providerData;
+                this.setState({
+                    ... this.state,
+                    photo: user.photoURL,
+                    displayname: user.displayName
+                });
+            }else{
+
+            }
+        });
+    }
+    
+    signinFacebook(){
+        const current = this;
+        firebase.auth().signInWithPopup(this.state.provider).then(function(result) {
         // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-            const token = result.credential.accessToken;
-            const user = result.user;
-            console.log(token);
-            console.log(user);
+            current.setState({
+                ... current.state,
+                photo: result.user.photoURL,
+                displayname: result.user.displayName
+            });
         }).catch(function(error) {
         // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            const email = error.email;
-            const credential = error.credential;
-            console.log(errorCode);
-            console.log(errorMessage);
-            console.log(email);
-            console.log(credential);
+            console.log( error.code);
+            console.log(error.message);
+            console.log(error.email);
+            console.log(error.credential);
         });
     }
 
-    function logoutFacebook(){
+    logoutFacebook(){
+        const current = this;
         firebase.auth().signOut().then(function() {
-            // Sign-out successful.
+            current.setState({
+                ... current.state,
+                photo: '',
+                displayname: ''
+            });
             console.log('Sign-out successful.');
         }).catch(function(error) {
         // An error happened.
@@ -37,18 +73,26 @@ function FacebookAuth() {
         });
     }
 
-    return (
-        <>
-        <Menu />
-            <Layout>
-                <h1>Firebase Facebook Auth</h1>
-                <div>
-                    <button id="signin" name="signin" onClick={signinFacebook}>Sign In</button>
-                    <button id="logout" name="logout" onClick={logoutFacebook}>Log out</button>
-                </div>
-            </Layout>
-        </>
-    );
+    render(){
+        return (
+            <>
+            <Menu />
+                <Layout>
+                    <h1>Firebase Facebook Auth</h1>
+                    <div>{this.state.displayname}</div>
+                    <div>
+                        <img src={this.state.photo} ></img>
+                    </div>
+                    <div>
+                        {this.state.displayname =='' && (
+                            <button id="signin" name="signin" onClick={this.signinFacebook}>Sign In</button>
+                        )}
+                        <button id="logout" name="logout" onClick={this.logoutFacebook}>Log out</button>
+                    </div>
+                </Layout>
+            </>
+        );
+    }
 }
   
 export default FacebookAuth
