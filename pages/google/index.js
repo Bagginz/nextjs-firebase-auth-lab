@@ -27,8 +27,6 @@ class GoogleAuth extends Component {
                     photo: user.photoURL,
                     displayname: user.displayName
                 });
-            }else{
-
             }
         });
     }
@@ -80,7 +78,9 @@ class GoogleAuth extends Component {
                 <h1>Firebase Google Auth</h1>
                 <div>{this.state.displayname}</div>
                 <div>
-                    <img src={this.state.photo} ></img>
+                {this.state.photo != '' && (
+                    <img src={this.state.photo} width="100" height="100"></img>
+                )}
                 </div>
                 <div>
                 {this.state.displayname =='' && (

@@ -12,6 +12,9 @@ const Menu = () => (
     <Link href="/email">
       <a className={style.linkStyle}>Email</a>
     </Link>
+    <Link href="/line">
+      <a className={style.linkStyle}>Line</a>
+    </Link>
   </div>
 );
 
